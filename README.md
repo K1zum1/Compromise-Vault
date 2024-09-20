@@ -1,8 +1,11 @@
-# Compromise Vault:  
-## A web application designed to securely aggregate and manage known compromised SSH keys, providing system administrators with a centralized repository to enhance security measures and prevent unauthorized access.
+# Compromise Vault  
 
-## Warning: This version is a protoype and only used for testing features. Unfortunately the production version is unavailible to the general public, however you can head [here](ssh-aggregator.vercel.app) to try it out yourself. 
+### A web application designed to securely aggregate and manage known compromised SSH keys, providing system administrators with a centralized repository to enhance security and prevent unauthorized access.
+
+> ⚠️ **Warning:** This version is a prototype and is only used for testing features. Unfortunately, the production version is unavailable to the general public. However, you can head [here](https://ssh-aggregator.vercel.app/) to try it out yourself.
+
 ![SSH Key Submission](ssh-key-submission/ssh.jpg)
+
 ## Table of Contents
 
 - [Description](#description)
@@ -10,7 +13,7 @@
 - [Redeployment](#redeployment)
   - [Clone the Repository](#clone-the-repository)
   - [Install Project Dependencies](#install-project-dependencies)
-  - [Create a .env File](#Create-a-.env-file-in-the-project-root)
+  - [Create a .env File](#create-a-env-file)
   - [Add PostgreSQL Connection Details](#add-postgresql-connection-details)
 - [Database Schema](#database-schema)
   - [Table: SSHKeys](#table-sshkeys)
@@ -21,6 +24,8 @@
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact Information](#contact-information)
+
+---
 
 ## Description
 
