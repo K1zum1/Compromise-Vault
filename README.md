@@ -1,8 +1,8 @@
-## Compromise Vault:  
-### A web application designed to securely aggregate and manage known compromised SSH keys, providing system administrators with a centralized repository to enhance security measures and prevent unauthorized access.
+# Compromise Vault:  
+## A web application designed to securely aggregate and manage known compromised SSH keys, providing system administrators with a centralized repository to enhance security measures and prevent unauthorized access.
+
+## Warning: This version is a protoype and only used for testing features. Unfortunately the production version is unavailible to the general public, however you can head [here](ssh-aggregator.vercel.app) to try it out yourself. 
 ![SSH Key Submission](ssh-key-submission/ssh.jpg)
-
-
 ## Table of Contents
 
 - [Description](#description)
@@ -26,9 +26,8 @@
 
 Compromise Vault is a web application designed to manage the submission and tracking of SSH keys. It allows users to submit SSH private and public keys, ensures their validity, and stores them securely in a database. This project is useful for administrators and developers who are looking to generate key revocation lists in order to blacklist these compromised keys. 
 
-## Limitations
+## Limitations as of July 2024
 
-Currently as of now there are a few known limitations
 - **Limited Database Size**
 - **Only checks for RSA fingerprints. Does not check other types**
 - **Does not generate a .krl file, only gives JSON data of the public keys**
