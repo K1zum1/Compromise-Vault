@@ -47,22 +47,10 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
         return;
       }
 
-      const isPrivKeyValid = isValidSSHKey(sshPrivKey, 'private');
-      const isPubKeyValid = isValidSSHKey(sshPubKey, 'public');
       const isPrivKeyEncrypted = isPassphraseProtected(sshPrivKey);
 
       if (isPrivKeyEncrypted) {
         setError('SSH private key is passphrase-protected. Please enter only non-passphrase protected keys.');
-        setStatus('');
-        clearError();
-        clearStatus();
-      } else if (isPrivKeyValid.error) {
-        setError(isPrivKeyValid.error);
-        setStatus('');
-        clearError();
-        clearStatus();
-      } else if (isPubKeyValid.error) {
-        setError(isPubKeyValid.error);
         setStatus('');
         clearError();
         clearStatus();
@@ -74,6 +62,7 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
             privateKey: sshPrivKey,
             publicKey: sshPubKey
           });
+                 
 
           console.log('Fingerprint Calculation Response:', response.data);
 
@@ -98,28 +87,6 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
         }
       }
     }, 1000);
-  };
-
-  const isValidSSHKey = (key, type) => {
-    if (key.includes('-----BEGIN OPENSSH CERTIFICATE-----')) {
-      return { valid: false, error: 'OPENSSH certificates are not supported.' };
-    }
-    if (key.includes('ssh-rsa-cert-v01@openssh.com') || key.includes('ssh-dss-cert-v01@openssh.com')) {
-      return { valid: false, error: 'OPENSSH certificates are not supported.' };
-    }
-
-    let regex;
-    if (type === 'private') {
-      regex = /^-----BEGIN ((RSA|DSA|ECDSA|OPENSSH) )?PRIVATE KEY-----(.|\n|\r)*?-----END ((RSA|DSA|ECDSA|OPENSSH) )?PRIVATE KEY-----$/;
-    } else {
-      regex = /^ssh-(rsa|dss|ed25519|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+\s*(\S+\s*)?$/;
-    }
-
-    if (!regex.test(key.trim())) {
-      return { valid: false, error: `Invalid SSH ${type} key format.` };
-    }
-
-    return { valid: true };
   };
 
   const isPassphraseProtected = (privKey) => {
