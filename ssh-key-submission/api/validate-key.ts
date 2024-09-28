@@ -1,117 +1,63 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import crypto from 'crypto';
-import forge from 'node-forge';
+import { NowRequest, NowResponse } from '@vercel/node';
+import { validateRSAKey } from '../api/validate-rsa';
+import { validateDSSKey } from '../api/validate-dss';
+import { validateECDSAKey } from '../api/validate-ecdsa';
+import { validateEd25519Key } from '../api/validate-ed';
 
-const isValidSSHPrivateKey = (key: string | undefined): { valid: boolean, error?: string } => {
-  if (!key) {
-    return { valid: false, error: 'SSH private key is missing.' };
+
+const extractKeyType = (pubKey: string): string => {
+  const keyTypePatterns = {
+    'ssh-rsa': 'RSA',
+    'ssh-dss': 'DSA',
+    'ssh-ed25519': 'ED25519',
+    'ecdsa-sha2-nistp256': 'ECDSA',
+    'ecdsa-sha2-nistp384': 'ECDSA',
+    'ecdsa-sha2-nistp521': 'ECDSA'
+  };
+
+  for (const pattern in keyTypePatterns) {
+    if (pubKey.startsWith(pattern)) {
+      return keyTypePatterns[pattern];
+    }
   }
 
-  if (key.includes('-----BEGIN OPENSSH CERTIFICATE-----')) {
-    return { valid: false, error: 'OPENSSH certificates are not supported.' };
-  }
-
-  const privateKeyPattern = /^-----BEGIN ((EC|DSA|RSA|ECDSA|OPENSSH) )?PRIVATE KEY-----(.|\n|\r)*?-----END ((EC|PGP|DSA|RSA|ECDSA) )?PRIVATE KEY-----$/;
-  if (!privateKeyPattern.test(key.trim())) {
-    return { valid: false, error: 'Invalid SSH private key format.' };
-  }
-
-  const isPassphraseProtected = key.includes('Proc-Type: 4,ENCRYPTED') && key.includes('DEK-Info');
-  if (isPassphraseProtected) {
-    return { valid: false, error: 'SSH private key is password-protected.' };
-  }
-
-  return { valid: true };
+  return 'UNKNOWN';
 };
 
-const isValidSSHPublicKey = (key: string | undefined): { valid: boolean, error?: string } => {
-  if (!key) {
-    return { valid: false, error: 'SSH public key is missing.' };
-  }
-
-  const publicKeyPattern = /^ssh-(rsa|dss|ecdsa-sha2-nistp(256|384|521)|ed25519)\s+[A-Za-z0-9+/=]+\s*(\S+\s*)?$/;
-
-  if (!publicKeyPattern.test(key.trim())) {
-    return { valid: false, error: 'Invalid SSH public key format.' };
-  }
-
-  if (key.includes('ssh-rsa-cert-v01@openssh.com') || key.includes('ssh-dss-cert-v01@openssh.com')) {
-    return { valid: false, error: 'OPENSSH certificates are not supported.' };
-  }
-
-  return { valid: true };
-};
-
-const calculateSSHPublicKeyFingerprint = (pubKey: string): string | null => {
-  try {
-    const keyParts = pubKey.trim().split(' ');
-    if (keyParts.length < 2) return null;
-
-    const keyData = Buffer.from(keyParts[1], 'base64');
-
-    const hash = crypto.createHash('md5');
-    hash.update(keyData);
-    const digest = hash.digest('hex');
-    const fingerprint = digest.match(/.{2}/g)?.join(':') ?? null;
-
-    console.log(`Calculated fingerprint: ${fingerprint}`);
-
-    return fingerprint;
-  } catch (error) {
-    console.error('Error calculating fingerprint:', error);
-    return null;
-  }
-};
-
-const extractPublicKeyFromPrivateKey = (privateKey: string): string | null => {
-  try {
-    const privateKeyObject = forge.pki.privateKeyFromPem(privateKey);
-    const publicKeyObject = forge.pki.setRsaPublicKey(privateKeyObject.n, privateKeyObject.e);
-    const sshPublicKey = forge.ssh.publicKeyToOpenSSH(publicKeyObject);
-    return sshPublicKey;
-  } catch (error) {
-    console.error('Error extracting public key from private key:', error);
-    return null;
-  }
-};
-
-export default async function validateKey(req: VercelRequest, res: VercelResponse) {
+export default (req: NowRequest, res: NowResponse) => {
   const { privateKey, publicKey } = req.body;
 
   if (!privateKey || !publicKey) {
-    return res.status(400).json({ error: 'Both privateKey and publicKey must be provided.' });
+    return res.status(400).json({ valid: false, error: 'Private and public keys are required.' });
   }
 
-  const privateKeyValidation = isValidSSHPrivateKey(privateKey);
-  const publicKeyValidation = isValidSSHPublicKey(publicKey);
+  // Extract key type using regex
+  const keyType = extractKeyType(publicKey);
 
-  if (!privateKeyValidation.valid) {
-    console.error(`Private Key Validation Error: ${privateKeyValidation.error}`);
-    return res.status(400).json({ error: privateKeyValidation.error });
+  let isValid = false;
+  let error = '';
+
+  
+  switch (keyType) {
+    case 'RSA':
+      isValid = validateRSAKey(privateKey, publicKey);
+      break;
+    case 'DSA':
+      isValid = validateDSSKey(privateKey, publicKey);
+      break;
+    case 'ECDSA':
+      isValid = validateECDSAKey(privateKey, publicKey);
+      break;
+    case 'ED25519':
+      isValid = validateEd25519Key(privateKey, publicKey);
+      break;
+    default:
+      error = 'Unsupported or invalid key type';
   }
-  if (!publicKeyValidation.valid) {
-    console.error(`Public Key Validation Error: ${publicKeyValidation.error}`);
-    return res.status(400).json({ error: publicKeyValidation.error });
+
+  if (!isValid) {
+    return res.status(400).json({ valid: false, error: error || `Invalid ${keyType} key.` });
   }
 
-  if (privateKey.includes('RSA PRIVATE KEY')) {
-    const extractedPublicKey = extractPublicKeyFromPrivateKey(privateKey);
-    if (!extractedPublicKey) {
-      console.error('Failed to extract public key from private key.');
-      return res.status(500).json({ error: 'Failed to extract public key from private key.' });
-    }
-
-    const extractedFingerprint = calculateSSHPublicKeyFingerprint(extractedPublicKey);
-    const providedFingerprint = calculateSSHPublicKeyFingerprint(publicKey);
-
-    if (!extractedFingerprint || !providedFingerprint) {
-      console.error('Failed to calculate fingerprints.');
-      return res.status(500).json({ error: 'Failed to calculate fingerprints.' });
-    }
-
-    const isValid = extractedFingerprint === providedFingerprint;
-    return res.status(200).json({ valid: isValid, fingerprint: providedFingerprint, fingerprintValidated: 'yes' });
-  } else {
-    return res.status(200).json({ valid: true, fingerprintValidated: 'no' });
-  }
-}
+  return res.status(200).json({ valid: true, fingerprintValidated: true });
+};
