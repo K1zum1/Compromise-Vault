@@ -1,11 +1,12 @@
-import { NowRequest, NowResponse } from '@vercel/node';
-import { validateRSAKey } from '../api/validate-rsa';
-import { validateDSSKey } from '../api/validate-dss';
-import { validateECDSAKey } from '../api/validate-ecdsa';
-import { validateEd25519Key } from '../api/validate-ed';
+// routes/validateKeyTypes.js
+const express = require('express');
+const { validateRSAKey } = require('./validateRsa');
+const { validateDSSKey } = require('./validateDss');
+const { validateECDSAKey } = require('./validateEcdsa');
+const { validateEdKey } = require('./validateEd');
+const router = express.Router();
 
-
-const extractKeyType = (pubKey: string): string => {
+const extractKeyType = (pubKey) => {
   const keyTypePatterns = {
     'ssh-rsa': 'RSA',
     'ssh-dss': 'DSA',
@@ -24,20 +25,18 @@ const extractKeyType = (pubKey: string): string => {
   return 'UNKNOWN';
 };
 
-export default (req: NowRequest, res: NowResponse) => {
+router.post('/', (req, res) => {
   const { privateKey, publicKey } = req.body;
 
   if (!privateKey || !publicKey) {
     return res.status(400).json({ valid: false, error: 'Private and public keys are required.' });
   }
 
-  // Extract key type using regex
   const keyType = extractKeyType(publicKey);
 
   let isValid = false;
   let error = '';
 
-  
   switch (keyType) {
     case 'RSA':
       isValid = validateRSAKey(privateKey, publicKey);
@@ -49,7 +48,7 @@ export default (req: NowRequest, res: NowResponse) => {
       isValid = validateECDSAKey(privateKey, publicKey);
       break;
     case 'ED25519':
-      isValid = validateEd25519Key(privateKey, publicKey);
+      isValid = validateEdKey(privateKey, publicKey);
       break;
     default:
       error = 'Unsupported or invalid key type';
@@ -60,4 +59,6 @@ export default (req: NowRequest, res: NowResponse) => {
   }
 
   return res.status(200).json({ valid: true, fingerprintValidated: true });
-};
+});
+
+module.exports = router;
