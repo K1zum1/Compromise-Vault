@@ -20,16 +20,16 @@ const App = () => {
     setShowModal(true);
   }, []);
 
-  const handleFormSubmit = async ({ sshPrivKey, sshPubKey, keyType, fingerprintValidated }) => {
+  const handleFormSubmit = async ({ sshPrivKey, sshPubKey, fingerprintValidated }) => {
     setIsLoading(true);
     setSuccess('');
     try {
-      const response = await fetch('/api/add-key', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/add-key`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ privKey: sshPrivKey, pubKey: sshPubKey, keyType, fingerprintValidated }),
+        body: JSON.stringify({ privKey: sshPrivKey, pubKey: sshPubKey, fingerprintValidated }),
       });
 
       if (response.status === 409) {
@@ -55,7 +55,7 @@ const App = () => {
 
   const handleDownloadJSON = async () => {
     try {
-      const response = await fetch('/api/generatefullData');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generatefullData`);
       if (!response.ok) {
         throw new Error('Failed to generate JSON.');
       }
@@ -78,7 +78,7 @@ const App = () => {
 
   const handleDownloadPubKeys = async () => {
     try {
-      const response = await fetch('/api/generatepubKey');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generatepubKey`);
       if (!response.ok) {
         throw new Error('Failed to generate public keys.');
       }

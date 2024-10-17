@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import './SSHKeyForm.css';
+import '../style/SSHKeyForm.css';
 
 const SSHKeyForm = () => {
   const [privKey, setPrivKey] = useState('');
   const [pubKey, setPubKey] = useState('');
-  const [keyType, setKeyType] = useState('');
-  const [fingerprintValidated, setFingerprintValidated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
 
   const handleSubmit = async (e) => {
@@ -14,8 +12,6 @@ const SSHKeyForm = () => {
     const data = {
       privKey,
       pubKey,
-      keyType,
-      fingerprintValidated,
     };
 
     try {
@@ -59,25 +55,6 @@ const SSHKeyForm = () => {
             onChange={(e) => setPubKey(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Key Type:</label>
-          <input
-            type="text"
-            value={keyType}
-            onChange={(e) => setKeyType(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={fingerprintValidated}
-              onChange={(e) => setFingerprintValidated(e.target.checked)}
-            />
-            Fingerprint Validated
-          </label>
         </div>
         <button type="submit">Submit</button>
       </form>
