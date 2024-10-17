@@ -1,130 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../style/SSHKeyForm.css';
+import React, { useState } from 'react';
+import './SSHKeyForm.css';
 
-const SSHKeyForm = ({ onSubmit, externalError }) => {
-  const [sshPrivKey, setSSHPrivKey] = useState('');
-  const [sshPubKey, setSSHPubKey] = useState('');
-  const [error, setError] = useState('');
-  const [status, setStatus] = useState('');
-
-  useEffect(() => {
-    if (externalError) {
-      setError(externalError);
-      clearError();
-    }
-  }, [externalError]);
-
-  const keyTypeMap = new Map([
-    ['ssh-rsa', 'RSA'],
-    ['ssh-dss', 'DSA'],
-    ['ssh-ed25519', 'ED25519'],
-    ['ecdsa-sha2-nistp256', 'ECDSA 256'],
-    ['ecdsa-sha2-nistp384', 'ECDSA 384'],
-    ['ecdsa-sha2-nistp521', 'ECDSA 521']
-  ]);
-
-  const extractKeyType = (pubKey) => {
-    for (const [key, value] of keyTypeMap) {
-      if (pubKey.startsWith(key)) {
-        return value;
-      }
-    }
-    return 'UNKNOWN INVALID KEY';
-  };
+const SSHKeyForm = () => {
+  const [privKey, setPrivKey] = useState('');
+  const [pubKey, setPubKey] = useState('');
+  const [keyType, setKeyType] = useState('');
+  const [fingerprintValidated, setFingerprintValidated] = useState(false);
+  const [responseMessage, setResponseMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setStatus('Checking SSH key formatting...');
 
-    setTimeout(async () => {
-      if (!sshPrivKey.trim() || !sshPubKey.trim()) {
-        setError('Please fill out all fields.');
-        setStatus('');
-        clearError();
-        clearStatus();
-        return;
-      }
+    const data = {
+      privKey,
+      pubKey,
+      keyType,
+      fingerprintValidated,
+    };
 
-      const isPrivKeyEncrypted = isPassphraseProtected(sshPrivKey);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/add-key`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-      if (isPrivKeyEncrypted) {
-        setError('SSH private key is passphrase-protected. Please enter only non-passphrase protected keys.');
-        setStatus('');
-        clearError();
-        clearStatus();
+      const result = await response.json();
+
+      if (response.ok) {
+        setResponseMessage('SSH key added successfully!');
       } else {
-        try {
-          const keyType = extractKeyType(sshPubKey);
-          setStatus('Comparing fingerprints...');
-          const response = await axios.post('/api/validate-key', {
-            privateKey: sshPrivKey,
-            publicKey: sshPubKey
-          });
-                 
-
-          console.log('Fingerprint Calculation Response:', response.data);
-
-          if (response.data.valid) {
-            onSubmit({ sshPrivKey, sshPubKey, keyType, fingerprintValidated: response.data.fingerprintValidated, setError });
-            setSSHPrivKey('');
-            setSSHPubKey('');
-            clearStatus();
-            clearError();
-          } else {
-            setError('The private and public keys do not match.');
-            setStatus('');
-            clearError();
-            clearStatus();
-          }
-        } catch (error) {
-          console.error('Error handling form submission:', error);
-          setError('Failed to submit SSH keys. Please try again.');
-          setStatus('');
-          clearError();
-          clearStatus();
-        }
+        setResponseMessage(`Error: ${result.error}`);
       }
-    }, 1000);
-  };
-
-  const isPassphraseProtected = (privKey) => {
-    return privKey.includes('Proc-Type: 4,ENCRYPTED') && privKey.includes('DEK-Info');
-  };
-
-  const clearError = () => {
-    setTimeout(() => setError(''), 2000);
-  };
-
-  const clearStatus = () => {
-    setTimeout(() => setStatus(''), 2000);
+    } catch (error) {
+      setResponseMessage('Failed to add SSH key. Please try again later.');
+      console.error('Error:', error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="message-placeholder">
-        {status && !error && <p className="status">{status}</p>}
-        {error && <p className="error">{error}</p>}
-      </div>
-      <textarea
-        value={sshPrivKey}
-        onChange={(e) => setSSHPrivKey(e.target.value)}
-        placeholder="Enter your SSH Private Key..."
-        rows="4"
-        cols="50"
-        autoComplete="on"
-      />
-      <textarea
-        value={sshPubKey}
-        onChange={(e) => setSSHPubKey(e.target.value)}
-        placeholder="Enter your SSH Public Key..."
-        rows="4"
-        cols="50"
-        autoComplete="on"
-      />
-      <button type="submit" className='submitButton'>SUBMIT</button>
-    </form>
+    <div className="ssh-key-form">
+      <h2>Submit SSH Key</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Private Key:</label>
+          <textarea
+            value={privKey}
+            onChange={(e) => setPrivKey(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Public Key:</label>
+          <textarea
+            value={pubKey}
+            onChange={(e) => setPubKey(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Key Type:</label>
+          <input
+            type="text"
+            value={keyType}
+            onChange={(e) => setKeyType(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={fingerprintValidated}
+              onChange={(e) => setFingerprintValidated(e.target.checked)}
+            />
+            Fingerprint Validated
+          </label>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+      {responseMessage && <p>{responseMessage}</p>}
+    </div>
   );
 };
 
