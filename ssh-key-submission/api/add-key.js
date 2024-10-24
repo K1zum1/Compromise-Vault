@@ -1,4 +1,4 @@
-// routes/addKey.js
+
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
@@ -15,10 +15,19 @@ router.post('/', async (req, res) => {
   const { privKey, pubKey, keyType, fingerprintValidated } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const userAgent = req.headers['user-agent'];
-  const referer = req.headers.referer || req.headers.referrer;
+  let referer = req.headers.referer || req.headers.referrer;
 
   if (!privKey || !pubKey || !keyType) {
     return res.status(400).json({ error: 'Private key, public key, and key type are required.' });
+  }
+
+  try {
+    if (referer) {
+      referer = decodeURIComponent(referer);
+    }
+  } catch (error) {
+    console.warn('Invalid referer URI:', referer);
+    referer = 'Invalid URI';
   }
 
   try {

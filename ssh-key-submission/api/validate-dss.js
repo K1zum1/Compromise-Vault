@@ -1,4 +1,3 @@
-// routes/validateDss.js
 const express = require('express');
 const { Key } = require('sshpk');
 const router = express.Router();
@@ -14,6 +13,7 @@ function validateDSSKey(privKey, pubKey) {
     const pubKeyFingerprint = parsedPubKey.fingerprint('sha256').toString();
     return privKeyFingerprint === pubKeyFingerprint;
   } catch (err) {
+    console.error('Error during key validation:', err); 
     return false;
   }
 }

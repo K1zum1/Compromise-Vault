@@ -8,6 +8,8 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
 
+  const API_BASE_URL = 'http://localhost:3001';
+
   useEffect(() => {
     if (externalError) {
       setError(externalError);
@@ -31,7 +33,7 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
 
       try {
         setStatus('Comparing fingerprints...');
-        const response = await axios.post('/api/validate-key', {
+        const response = await axios.post(`${API_BASE_URL}/api/validate-key`, {
           privateKey: sshPrivKey,
           publicKey: sshPubKey
         });
@@ -52,6 +54,9 @@ const SSHKeyForm = ({ onSubmit, externalError }) => {
         }
       } catch (error) {
         console.error('Error handling form submission:', error);
+        if (error.response) {
+          console.error('Server response:', error.response.data);
+        }
         setError('Failed to submit SSH keys. Please try again.');
         setStatus('');
         clearError();
