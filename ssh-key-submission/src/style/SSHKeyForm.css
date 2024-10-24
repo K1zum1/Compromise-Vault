@@ -94,3 +94,62 @@ textarea, select {
 .submitButton:active {
   background: linear-gradient(32deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
 }
+
+
+
+.ssh-key-form h2 {
+  color: #ffffff; 
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin-bottom: 1em;
+  text-transform: uppercase;
+}
+
+
+.form-group {
+  margin-bottom: 1.5em;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.75em;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #ddd;
+  background-color: #333;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #03a9f4; 
+}
+
+
+.status {
+  font-family: 'Poppins', sans-serif;
+  color: #ffeb3b;
+  text-align: center;
+  margin-top: 1em;
+  text-transform: uppercase;
+}
+
+.error {
+  font-family: 'Poppins', sans-serif;
+  color: #f441a5; 
+  text-align: center;
+  margin-top: 1em;
+  text-transform: uppercase;
+}
