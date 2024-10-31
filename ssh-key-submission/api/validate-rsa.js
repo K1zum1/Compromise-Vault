@@ -8,15 +8,24 @@ function validateRSAKey(privKey, pubKey) {
   try {
     const parsedPrivKey = Key.parse(privKey, 'pem');
     const parsedPubKey = Key.parse(pubKey, 'ssh');
-    if (parsedPrivKey.type !== 'rsa' || parsedPubKey.type !== 'rsa') return false;
+    if (parsedPrivKey.type !== 'rsa' || parsedPubKey.type !== 'rsa') {
+      console.error('Key type mismatch: Expected RSA keys.');
+      return false;
+    }
     const publicFromPrivate = parsedPrivKey.toPublic();
     const privKeyFingerprint = publicFromPrivate.fingerprint('sha256').toString();
     const pubKeyFingerprint = parsedPubKey.fingerprint('sha256').toString();
-    return privKeyFingerprint === pubKeyFingerprint;
+    if (privKeyFingerprint !== pubKeyFingerprint) {
+      console.error('Fingerprint mismatch between private and public keys.');
+      return false;
+    }
+    return true;
   } catch (err) {
+    console.error('Error parsing RSA keys:', err);
     return false;
   }
 }
+
 
 router.post('/', async (req, res) => {
   const { privKey, pubKey } = req.body;

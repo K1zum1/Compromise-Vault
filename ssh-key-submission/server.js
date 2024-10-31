@@ -42,6 +42,7 @@ app.listen(port, () => {
 app.get('/test-db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
+    console.log('Database connection successful:', result.rows);
     res.status(200).json(result.rows);
   } catch (err) {
     console.error('Database connection error:', err);
