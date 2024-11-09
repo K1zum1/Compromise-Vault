@@ -1,0 +1,30 @@
+{
+	"include": ["./src/**/*.ts"],
+	"exclude": ["node_modules", "dist"],
+	"compilerOptions": {
+		"target": "es2019",
+		"module": "commonjs",
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+
+		/* Bundler mode */
+		"outDir": "dist",
+		"rootDir": "src",
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true,
+		"paths": {
+			"@modules/*": ["./src/modules/*"],
+			"@helpers/*": ["./src/helpers/*"],
+			"@configs/*": ["./src/configs/*"],
+			"@middlewares/*": ["./src/middlewares/*"],
+			"@models/*": ["./src/models/*"],
+			"@utils/*": ["./src/utils/*"],
+			"@/*": ["./src/*"]
+		}
+	}
+}

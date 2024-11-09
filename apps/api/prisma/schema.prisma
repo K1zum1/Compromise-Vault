@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model Keys {
+  id                   Int      @id @default(autoincrement())
+  privKey              String   @map("priv_key")
+  pubKey               String   @map("pub_key")
+  keyType              String   @map("key_type") @db.VarChar(255)
+  ipAddress            String   @map("ip_address") @db.VarChar(255)
+  userAgent            String   @map("user_agent") @db.VarChar(255)
+  submissionDate       DateTime @default(now()) @map("submission_date")
+  referer              String
+  fingerprintValidated Boolean  @map("fingerprint_validated")
+
+  @@map("keys")
+}
