@@ -1,0 +1,18 @@
+{
+    "builds": [
+      {
+        "src": "apps/api/src/index.ts",
+        "use": "@vercel/node",
+        "config": {
+          "distDir": "apps/api/dist"
+        }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "apps/api/dist/index.js"
+      }
+    ]
+  }
+  
