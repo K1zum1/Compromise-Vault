@@ -70,3 +70,19 @@ or -------
 cd apps/api
 pnpm dev
 ```
+
+## Database Schema
+
+### Table: keys
+
+| table_name | column_name           | data_type                   | is_nullable | column_default                          |
+|------------|------------------------|-----------------------------|-------------|-----------------------------------------|
+| keys       | id                    | integer                     | NO          | nextval('keys_id_seq'::regclass)        |
+| keys       | priv_key              | text                        | NO          | null                                    |
+| keys       | pub_key               | text                        | NO          | null                                    |
+| keys       | key_type              | character varying           | NO          | null                                    |
+| keys       | ip_address            | character varying           | NO          | null                                    |
+| keys       | user_agent            | character varying           | NO          | null                                    |
+| keys       | submission_date       | timestamp without time zone | NO          | CURRENT_TIMESTAMP                       |
+| keys       | referer               | text                        | NO          | null                                    |
+| keys       | fingerprint_validated | boolean                     | NO          | null                                    |
