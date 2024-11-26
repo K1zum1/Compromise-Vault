@@ -4,12 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "pnpm --filter '@my-app/web' --filter '@my-app/api' run start",
-		"start:api": "pnpm --filter '@my-app/api' run start",
-		"start:web": "pnpm --filter '@my-app/web' run start",
-		"build": "pnpm --filter '@my-app/web' --filter '@my-app/api' run build",
-		"build:api": "pnpm --filter '@my-app/api' run build",
-		"build:web": "pnpm --filter '@my-app/web' run build"
+		"start": "pnpm --filter '@my-app/web' run start",
+		"build": "pnpm --filter '@my-app/web' run build & pnpm --filter '@my-app/api' run build"
 	},
 	"husky": {
 		"hooks": {

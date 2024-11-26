@@ -36,3 +36,4 @@ apps/api/public/*
 *.env
 *.env.production
 .vercel
+apps/api/.env
