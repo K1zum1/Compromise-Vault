@@ -1,4 +1,4 @@
-import './index.css';
+import './IM.css';
 
 type InfoModalProps = {
 	onClose: () => void;
@@ -6,21 +6,15 @@ type InfoModalProps = {
 
 const InfoModal = ({ onClose }: InfoModalProps) => {
 	return (
-		<div className="modal-overlay">
-			<div className="modal-content">
+		<div className="info-modal-overlay" onClick={onClose}>
+			<div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
 				<h2>About This Website</h2>
-				<p>
-					This website is intended for users to submit compromised SSH Keys and
-					download other compromised keys in order to be blacklisted.
-				</p>
-				<br></br>
 				<p>
 					Please be aware that the following data will be collected
 					automatically upon successful submission. These are collected for
-					security measures to ensure proper use
+					security measures to ensure proper use.
 				</p>
 				<ul>
-					<li>Compromised Keys</li>
 					<li>IP Address</li>
 					<li>User Agent</li>
 					<li>Submission Time/Date</li>
