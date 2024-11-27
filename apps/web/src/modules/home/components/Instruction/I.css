@@ -1,0 +1,107 @@
+.instructions-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.instructions-modal-content {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 450px;
+    text-align: left;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    position: relative;
+    transform: translateY(-15px);
+    animation: slideIn 0.3s ease-in-out forwards;
+    display: flex;
+    flex-direction: column;
+}
+
+.instructions-modal-content h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 16px;
+}
+
+.instructions-modal-content p {
+    margin: 10px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #555;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+.instructions-modal-content ol {
+    list-style-position: inside;
+    padding-left: 20px;
+    margin: 12px 0 20px;
+}
+
+.instructions-modal-content ol li {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #444;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+.instructions-modal-content button {
+    padding: 12px 24px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    outline: none;
+    width: auto;
+    margin-top: 20px;
+}
+
+.instructions-modal-content button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+.instructions-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.instructions-close-button:hover {
+    color: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
