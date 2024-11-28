@@ -1,3 +1,6 @@
+import { existsSync } from 'fs';
+import { join } from 'path';
+
 import { apiResponse, errorResponse } from '@utils/apiResponse';
 import AppError from '@utils/appError';
 
@@ -10,7 +13,7 @@ import { extractKeyType } from './util';
 const create = async (req: ExpressRequest, res: ExpressResponse) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const userAgent = req.headers['user-agent'];
-	const referer = req.headers.referer || req.headers.referrer;
+	const referer = req.headers.referer || req.headers.referrer || '';
 	const keyType = extractKeyType(req.body.pubKey);
 	const body = {
 		...req.body,
@@ -28,11 +31,13 @@ const create = async (req: ExpressRequest, res: ExpressResponse) => {
 
 	if (exist) {
 		return res
-			.status(404)
-			.json(errorResponse(new AppError('Key is exist', 404)));
+			.status(409)
+			.json(errorResponse(new AppError('Key is exist', 409)));
 	}
 
 	const file = await service.create(body);
+
+	service.generateKRL();
 
 	const response = apiResponse({ data: file });
 
@@ -60,4 +65,24 @@ const validate = async (req: ExpressRequest, res: ExpressResponse) => {
 	return res.status(200).json(response);
 };
 
-export default { create, validate };
+export const generateKRL = async (_: ExpressRequest, res: ExpressResponse) => {
+	const path = join(__dirname, `../../../assets/keys/krl_combined.krl`);
+
+	if (!existsSync(path)) {
+		const generatePath = await service.generateKRL();
+
+		if (!generatePath) {
+			return res
+				.status(400)
+				.json(
+					errorResponse(new AppError('Error when generate the krl file', 400)),
+				);
+		}
+
+		return res.download(generatePath);
+	}
+
+	res.download(path);
+};
+
+export default { create, validate, generateKRL };
