@@ -5,6 +5,8 @@ import { validateCreateKey, validateValidateKey } from './validator';
 
 const router = express.Router();
 
+router.get('/krl', controller.generateKRL);
+
 router.post('/', validateCreateKey, controller.create);
 router.post('/validate', validateValidateKey, controller.validate);
 
