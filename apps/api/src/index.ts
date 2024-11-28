@@ -17,7 +17,7 @@ const boostrap = async () => {
 
 	const rootRouter = (await import('./modules/router')).default;
 
-	const PORT = APP_PORT || 3000;
+	const PORT = APP_PORT || 3001;
 
 	const app = express();
 
@@ -41,7 +41,19 @@ const boostrap = async () => {
 		next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 	});
 
-	app.listen(PORT, () => console.log(`Running on port ${PORT} ⚡`));
+	const server = app.listen(PORT, () =>
+		console.log(`Running on port ${PORT} ⚡`),
+	);
+
+	server.on('error', (err: any) => {
+		if (err.code === 'EADDRINUSE') {
+			console.log(
+				`Port ${PORT} is already in use. Please try a different port.`,
+			);
+		} else {
+			console.error('Server error:', err);
+		}
+	});
 };
 
 boostrap();
