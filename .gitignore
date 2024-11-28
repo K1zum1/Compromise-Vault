@@ -37,3 +37,7 @@ apps/api/public/*
 *.env.production
 .vercel
 apps/api/.env
+apps/api/assets/keys/krl_combined.krl
+
+
+
