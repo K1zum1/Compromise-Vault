@@ -53,7 +53,6 @@
 		"eslint-plugin-import": "2.28.1",
 		"eslint-plugin-simple-import-sort": "10.0.0",
 		"eslint-plugin-unused-imports": "3.0.0",
-		"ffprobe-static": "3.1.0",
 		"globals": "15.9.0",
 		"nodemon": "3.1.4",
 		"rimraf": "6.0.1",
