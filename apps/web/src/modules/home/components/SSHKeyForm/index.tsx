@@ -10,6 +10,7 @@ type SSHKeyFormProps = {
 const SSHKeyForm = ({ onSubmit, externalError }: SSHKeyFormProps) => {
     const [sshPrivKey, setSSHPrivKey] = useState('');
     const [sshPubKey, setSSHPubKey] = useState('');
+    const [fingerprint, setFingerprint] = useState(''); // New state for fingerprint
     const [error, setError] = useState('');
     const [status, setStatus] = useState('');
 
@@ -19,6 +20,26 @@ const SSHKeyForm = ({ onSubmit, externalError }: SSHKeyFormProps) => {
             clearError();
         }
     }, [externalError]);
+
+    useEffect(() => {
+        const fetchFingerprint = async () => {
+            if (sshPubKey.trim()) {
+                try {
+                    const response = await http.post(`/keys/fingerprint`, {
+                        pubKey: sshPubKey,
+                    });
+                    setFingerprint(response.data?.fingerprint || 'Error computing fingerprint');
+                } catch (error) {
+                    console.error('Error fetching fingerprint:', error);
+                    setFingerprint('Error computing fingerprint');
+                }
+            } else {
+                setFingerprint('');
+            }
+        };
+
+        fetchFingerprint();
+    }, [sshPubKey]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -98,6 +119,15 @@ const SSHKeyForm = ({ onSubmit, externalError }: SSHKeyFormProps) => {
                         rows={4}
                         cols={60}
                         placeholder="ssh-type"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Fingerprint:</label>
+                    <input
+                        type="text"
+                        value={fingerprint}
+                        readOnly
+                        placeholder="Fingerprint will be displayed here"
                     />
                 </div>
                 <button type="submit" className="submitButton">
