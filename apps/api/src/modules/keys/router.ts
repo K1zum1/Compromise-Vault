@@ -9,5 +9,6 @@ router.get('/krl', controller.generateKRL);
 
 router.post('/', validateCreateKey, controller.create);
 router.post('/validate', validateValidateKey, controller.validate);
+router.post('/fingerprint', controller.computeFingerprint);
 
 export default router;
