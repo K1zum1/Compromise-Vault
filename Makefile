@@ -4,9 +4,9 @@ remove-modules:
 	find . -name "node_modules" -type d -prune -exec rm -rf '{}' + & 	find . -name "pnpm-lock.yaml" -exec rm -rf '{}' +
 
 api-dev:
-	pnpm -F @my-app/api dev
+	pnpm -F @compromise-vault/api dev
 
 web-dev:
-	pnpm -F @my-app/web dev
+	pnpm -F @compromise-vault/web dev
 
 
