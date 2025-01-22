@@ -1,7 +1,7 @@
 {
-	"name": "app-monorepo",
+	"name": "compromise-vault",
 	"version": "1.0.0",
-	"description": "",
+	"description": "frontend for ssh key aggregator idk what else to put here",
 	"main": "index.js",
 	"scripts": {
 		"start": "pnpm --filter '@my-app/web' run start",
@@ -24,7 +24,7 @@
 		]
 	},
 	"keywords": [],
-	"author": "",
+	"author": "jay",
 	"license": "ISC",
 	"devDependencies": {
 		"eslint": "8.51.0",

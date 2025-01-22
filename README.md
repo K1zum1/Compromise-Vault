@@ -47,7 +47,7 @@ pnpm install
 
 To start the frontend development server:
 ```bash
-pnpm -F @my-app/web dev
+pnpm -F @compromise-vault/web dev
 
 # Alternative
 make web-dev
