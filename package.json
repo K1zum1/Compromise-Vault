@@ -1,0 +1,39 @@
+{
+	"name": "app-monorepo",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "pnpm --filter '@my-app/web' run start",
+		"build": "pnpm --filter '@my-app/web' run build & pnpm --filter '@my-app/api' run build"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged",
+			"pre-push": "npm run lint"
+		}
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx}": [
+			"prettier --write",
+			"eslint --fix"
+		],
+		"*.{css,scss}": [
+			"prettier --write",
+			"stylelint --fix"
+		]
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"eslint": "8.51.0",
+		"husky": "9.1.5",
+		"lint-staged": "15.2.9",
+		"prettier": "3.3.3",
+		"stylelint": "16.8.2",
+		"stylelint-config-recommended-less": "3.0.1",
+		"stylelint-config-standard": "36.0.1",
+		"stylelint-scss": "6.5.0"
+	}
+}

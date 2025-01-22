@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #121212;
+    color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.ssh-key-form {
+    width: 100%;
+    max-width: 600px;
+    padding: 3rem;
+    background-color: #1c1c1c;
+    border-radius: 1.5em;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+h2 {
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 1em;
+    font-size: 1.25rem;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.75em;
+    border: 1px solid #333;
+    border-radius: 0.75em;
+    background-color: #333;
+    color: #ddd;
+    font-family: 'Courier New', Courier, monospace;
+    resize: vertical;
+    transition: border-color 0.3s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #03a9f4;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    color: #ccc;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.submitButton {
+    padding: 0.75em 1.5em;
+    background: linear-gradient(90deg, #03a9f4, #f441a5, #ffeb3b);
+    background-size: 300%;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: background-position 0.5s ease, transform 0.1s ease;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.submitButton:hover {
+    background-position: 100%;
+    transform: scale(1.05);
+}
+
+.submitButton:active {
+    transform: scale(0.98);
+}
+
+.status {
+    color: #ffeb3b;
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 1em;
+    font-weight: 600;
+}
+
+.error {
+    color: #f441a5;
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 1em;
+    font-weight: 600;
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.status,
+.error {
+    animation: slideIn 0.5s ease-out;
+}
